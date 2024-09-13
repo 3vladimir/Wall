@@ -9,33 +9,54 @@ import * as React from "react";
 import { toPersianNumber } from "../../lib/TopersianNumber";
 import DatePicker from "react-persian-calendar-date-picker";
 import "react-persian-calendar-date-picker/lib/DatePicker.css";
-import { notesInitialValues } from "../../lib/NotesInintialValues";
-import { register } from "module";
+import { removeNote, editNote } from "../../lib/NotesActions";
+import { getToday } from "react-persian-calendar-date-picker";
+import {Note} from '../../types/types'
 
 type Props = {
-  content: string;
-  dateOfRegistration: Record<string, number>;
-  deadline: Record<string, number>;
-  id: string;
-  removeNote: (id: string) => void;
+  note: Note;
+  notesInfo: Note[];
+  setNotesInfo: React.Dispatch<React.SetStateAction<Note[]>>;
 };
 
-function App({ content, dateOfRegistration, deadline, id, removeNote }: Props) {
+function App({ note, notesInfo, setNotesInfo }: Props) {
+  const { content, deadline, dateOfRegistration, id } = note;
   const [contentState, setContentState] = React.useState(content);
   const [deadlineState, setDeadlineState] = React.useState(deadline);
   const [editingMode, setEditingMode] = React.useState(false);
   const [date, setDate] = React.useState(deadline);
   const { day, month, year } = date || { day: 0, month: 0, year: 0 };
   const editNoteInputRef = React.useRef<HTMLInputElement>(null);
+  const noteBoxRef = React.useRef<HTMLDivElement>(null);
+
+  const today = getToday();
+
+  function specifyExpiredNotes() {
+    if (deadlineState.year < today.year) {
+      noteBoxRef.current?.classList.add("bg-red-500");
+    } else if (deadlineState.year === today.year) {
+      if (deadlineState.month < today.month) {
+        noteBoxRef.current?.classList.add("bg-red-500");
+      } else if (deadlineState.month === today.month) {
+        if (deadlineState.day < today.day) {
+          noteBoxRef.current?.classList.add("bg-red-500");
+        }
+      }
+    }
+  }
+  
+  React.useEffect(() => {
+    specifyExpiredNotes();
+  }, [deadlineState]);
 
   function handleClickEdit() {
     setEditingMode(true);
   }
   function handleClickRemove() {
-    removeNote(id);
+    removeNote({ notesInfo, setNotesInfo, id });
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmitEditNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setEditingMode(false);
     const newContent = editNoteInputRef.current?.value || "";
@@ -44,25 +65,22 @@ function App({ content, dateOfRegistration, deadline, id, removeNote }: Props) {
       month: date ? month : 0,
       day: date ? day : 0,
     };
+    editNote({ notesInfo, setNotesInfo, id, newContent, newDeadline });
     setContentState(newContent);
     setDeadlineState(newDeadline);
-    const notesInfo = [...notesInitialValues];
-    const currentNoteIndex = notesInfo.findIndex(function (item, index) {
-      return item.id === id;
-    });
-    notesInfo[currentNoteIndex].content = newContent;
-    notesInfo[currentNoteIndex].deadline = newDeadline;
 
     localStorage.setItem("notesInfo", JSON.stringify(notesInfo));
   }
+
   return (
     <>
       <div
         className="w-96 min-h-28 mx-auto border-2 text-center p-3 rounded-md text-sm 
       hover:shadow-md bg-lime-400 cursor-pointer"
+        ref={noteBoxRef}
       >
         {editingMode ? (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmitEditNote}>
             <input
               type="text"
               ref={editNoteInputRef}
