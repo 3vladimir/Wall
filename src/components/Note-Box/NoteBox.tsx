@@ -11,7 +11,7 @@ import DatePicker from "react-persian-calendar-date-picker";
 import "react-persian-calendar-date-picker/lib/DatePicker.css";
 import { removeNote, editNote } from "../../lib/NotesActions";
 import { getToday } from "react-persian-calendar-date-picker";
-import {Note} from '../../types/types'
+import { Note } from "../../types/types";
 
 type Props = {
   note: Note;
@@ -44,7 +44,7 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
       }
     }
   }
-  
+
   React.useEffect(() => {
     specifyExpiredNotes();
   }, [deadlineState]);
@@ -76,21 +76,33 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
     <>
       <div
         className="w-96 min-h-28 mx-auto border-2 text-center p-3 rounded-md text-sm 
-      hover:shadow-md bg-lime-400 cursor-pointer"
+       bg-lime-400 cursor-pointer"
         ref={noteBoxRef}
       >
         {editingMode ? (
-          <form onSubmit={handleSubmitEditNote}>
-            <input
-              type="text"
-              ref={editNoteInputRef}
-              defaultValue={contentState}
-              className="w-[300px] border-2 rounded shadow-md
-                placeholder:text-xs focus:outline-none"
-            />
-            <DatePicker selectedDay={date} onChange={setDate} />
-            <button type="submit">تایید</button>
-          </form>
+          <div aria-label="form-container" className="bg-slate-200 py-1 mb-4">
+            <form onSubmit={handleSubmitEditNote}>
+              <input
+                type="text"
+                ref={editNoteInputRef}
+                defaultValue={contentState}
+                className="w-[300px] border-2 py-1 px-2 rounded shadow-md mb-1
+              placeholder:text-xs focus:outline-none bg-slate-100"
+              />
+              <div className="flex justify-evenly items-center">
+                <span className="fontIransnasLight text-xs">
+                  ددلاین یادداشت :
+                </span>
+                <DatePicker selectedDay={date} onChange={setDate} />
+                <button
+                  type="submit"
+                  className="fontIransnasLight text-xs bg-cyan-600 p-2 rounded text-[white]"
+                >
+                  تایید
+                </button>
+              </div>
+            </form>
+          </div>
         ) : (
           <div className="mb-2">{contentState}</div>
         )}
@@ -106,12 +118,23 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
           ${toPersianNumber(deadlineState.month || 0)} /
           ${toPersianNumber(deadlineState.year || 0)}`}
         </div>
-        <button className="bg-slate-300" onClick={handleClickEdit}>
-          ویرایش
-        </button>
-        <button className="bg-slate-500" onClick={handleClickRemove}>
-          حذف
-        </button>
+        <div
+          aria-label="buttons-edit-and-remove"
+          className="flex justify-between"
+        >
+          <button
+            className="fontIransnasLight text-xs rounded text-purple-700 hover:text-purple-500"
+            onClick={handleClickEdit}
+          >
+            ویرایش
+          </button>
+          <button
+            className="fontIransnasLight text-xs rounded text-purple-700 hover:text-purple-500"
+            onClick={handleClickRemove}
+          >
+            حذف
+          </button>
+        </div>
       </div>
     </>
   );

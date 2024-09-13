@@ -7,14 +7,20 @@ export const notesInitialValues = storedNotes
   : [
       {
         content: "خرید نان",
-        dateOfRegistration: { year: 1403, month: 6, day: 21 },
+        dateOfRegistration: { year: 1403, month: 6, day: 23 },
         deadline: { year: 1403, month: 6, day: 23 },
         id: uuid(),
       },
       {
         content: "آب دادن به گل ها",
-        dateOfRegistration: { year: 1403, month: 6, day: 21 },
-        deadline: { year: 1403, month: 6, day: 25 },
+        dateOfRegistration: { year: 1403, month: 6, day: 23 },
+        deadline: { year: 1403, month: 6, day: 24 },
+        id: uuid(),
+      },
+      {
+        content: "تعمیر ماشین",
+        dateOfRegistration: { year: 1403, month: 6, day: 23 },
+        deadline: { year: 1403, month: 7, day: 1 },
         id: uuid(),
       },
     ];

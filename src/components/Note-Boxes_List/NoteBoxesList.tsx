@@ -13,7 +13,7 @@ type Props = {
 function NoteSBoxesList({ notesInfo, setNotesInfo }: Props) {
   return (
     <>
-      <div aria-label="note-boxes-part" className="mt-10">
+      <div aria-label="note-boxes-part">
         <Reorder.Group values={notesInfo} onReorder={setNotesInfo}>
           <ul>
             {[...notesInfo].map((note, index) => (
