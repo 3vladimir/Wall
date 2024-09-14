@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import "./globals.css";
 
 export default function RootLayout({

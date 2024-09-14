@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-restricted-globals */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import * as React from "react";
 import { FaUser } from "react-icons/fa";
 
-function App() {
+function Header() {
   return (
     <>
       <header>
@@ -20,4 +16,4 @@ function App() {
   );
 }
 
-export default App;
+export default Header;

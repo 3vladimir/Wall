@@ -1,16 +1,12 @@
-/* eslint-disable react/display-name */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-restricted-globals */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 "use client";
 import * as React from "react";
 import { toPersianNumber } from "../../lib/TopersianNumber";
 import DatePicker from "react-persian-calendar-date-picker";
 import "react-persian-calendar-date-picker/lib/DatePicker.css";
 import { removeNote, editNote } from "../../lib/NotesActions";
-import { getToday } from "react-persian-calendar-date-picker";
+import { specifyExpiredNotes } from "../../lib/specifyExpiredNotes";
 import { Note } from "../../types/types";
 
 type Props = {
@@ -19,7 +15,7 @@ type Props = {
   setNotesInfo: React.Dispatch<React.SetStateAction<Note[]>>;
 };
 
-function App({ note, notesInfo, setNotesInfo }: Props) {
+function NoteBox({ note, notesInfo, setNotesInfo }: Props) {
   const { content, deadline, dateOfRegistration, id } = note;
   const [contentState, setContentState] = React.useState(content);
   const [deadlineState, setDeadlineState] = React.useState(deadline);
@@ -29,24 +25,8 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
   const editNoteInputRef = React.useRef<HTMLInputElement>(null);
   const noteBoxRef = React.useRef<HTMLDivElement>(null);
 
-  const today = getToday();
-
-  function specifyExpiredNotes() {
-    if (deadlineState.year < today.year) {
-      noteBoxRef.current?.classList.add("bg-red-500");
-    } else if (deadlineState.year === today.year) {
-      if (deadlineState.month < today.month) {
-        noteBoxRef.current?.classList.add("bg-red-500");
-      } else if (deadlineState.month === today.month) {
-        if (deadlineState.day < today.day) {
-          noteBoxRef.current?.classList.add("bg-red-500");
-        }
-      }
-    }
-  }
-
   React.useEffect(() => {
-    specifyExpiredNotes();
+    specifyExpiredNotes({ deadlineState, noteBoxRef });
   }, [deadlineState]);
 
   function handleClickEdit() {
@@ -75,6 +55,7 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
   return (
     <>
       <div
+        aria-label="note-box-container"
         className="w-96 min-h-28 mx-auto border-2 text-center p-3 rounded-md text-sm 
        bg-lime-400 cursor-pointer"
         ref={noteBoxRef}
@@ -89,7 +70,10 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
                 className="w-[300px] border-2 py-1 px-2 rounded shadow-md mb-1
               placeholder:text-xs focus:outline-none bg-slate-100"
               />
-              <div className="flex justify-evenly items-center">
+              <div
+                aria-label="deadline-part"
+                className="flex justify-evenly items-center"
+              >
                 <span className="fontIransnasLight text-xs">
                   ددلاین یادداشت :
                 </span>
@@ -119,7 +103,7 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
           ${toPersianNumber(deadlineState.year || 0)}`}
         </div>
         <div
-          aria-label="buttons-edit-and-remove"
+          aria-label="buttons-edit-and-remove-container"
           className="flex justify-between"
         >
           <button
@@ -140,4 +124,4 @@ function App({ note, notesInfo, setNotesInfo }: Props) {
   );
 }
 
-export default App;
+export default NoteBox;
