@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-restricted-globals */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 "use client";
 import * as React from "react";
 import { Header, NoteBoxesList } from "../components";
@@ -14,10 +10,15 @@ import "react-persian-calendar-date-picker/lib/DatePicker.css";
 
 function Main() {
   const today = getToday();
-  const [date, setDate] = React.useState(today);
 
+  const [date, setDate] = React.useState(today);
   const [notesInfo, setNotesInfo] = React.useState(notesInitialValues);
   const addNoteInputRef = React.useRef<HTMLInputElement>(null);
+  const [isInputFocused, setIsInputFocused] = React.useState(false);
+
+  isInputFocused
+    ? addNoteInputRef.current?.classList.add("pb-28")
+    : addNoteInputRef.current?.classList.remove("pb-28");
 
   function handleSubmitAddNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,7 +37,7 @@ function Main() {
           aria-label="whole-container"
           className="w-4/5 mx-auto mt-5 text-sm flex justify-evenly"
         >
-          <div aria-label="add-note-part" className="text-center">
+          <div aria-label="add-note-part">
             <form onSubmit={handleSubmitAddNote}>
               <div className="relative group">
                 <input
@@ -44,19 +45,31 @@ function Main() {
                   placeholder="نوشتن یادداشت..."
                   ref={addNoteInputRef}
                   required
-                  className="w-[500px] border-2 rounded shadow-md p-2 focus:pb-28
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
+                  className="w-[500px] border-2 rounded shadow-md p-2 
                  transition-all duration-500 placeholder:text-xs focus:outline-none"
                 />
                 <div
-                  className="absolute right-[5px]  bottom-1 text-xs flex items-center
+                  aria-label="choose-deadline-part"
+                  className="absolute right-[5px]  bottom-0 text-xs flex items-center
                 invisible group-focus-within:visible"
                 >
                   <span className="ml-1 fontIransnasLight">تاریخ ددلاین :</span>
-                  <DatePicker selectedDay={date} onChange={setDate} />
+
+                  <div
+                    aria-label="claender"
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
+                  >
+                    <DatePicker selectedDay={date} onChange={setDate} />
+                  </div>
                 </div>
                 <button
                   type="submit"
-                  className="absolute left-0 bottom-0 bg-cyan-600 p-3 rounded
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
+                  className="absolute left-0 bottom-0 bg-cyan-600 p-4 rounded
                   text-xs text-[white] fontIransnasLight invisible group-focus-within:visible"
                 >
                   افزودن یادداشت
