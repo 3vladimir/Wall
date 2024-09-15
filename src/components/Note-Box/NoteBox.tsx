@@ -25,6 +25,27 @@ function NoteBox({ note, notesInfo, setNotesInfo }: Props) {
   const editNoteInputRef = React.useRef<HTMLInputElement>(null);
   const noteBoxRef = React.useRef<HTMLDivElement>(null);
 
+  const [removeNoteDialogOpen, setRemoveNoteDialogOpen] = React.useState(false);
+  function handleOpenRemoveNoteDialog() {
+    setRemoveNoteDialogOpen(true);
+  }
+  function handleCloseRemoveNoteDialog() {
+    setRemoveNoteDialogOpen(false);
+  }
+  React.useEffect(() => {
+    function handleKeyPress(event: { key: string }) {
+      if (event.key === "Enter" && removeNoteDialogOpen) {
+        handleClickRemove();
+      }
+    }
+    if (removeNoteDialogOpen) {
+      document.addEventListener("keydown", handleKeyPress);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [removeNoteDialogOpen]);
+
   React.useEffect(() => {
     specifyExpiredNotes({ deadlineState, noteBoxRef });
   }, [deadlineState]);
@@ -114,11 +135,33 @@ function NoteBox({ note, notesInfo, setNotesInfo }: Props) {
           </button>
           <button
             className="fontIransnasLight text-xs rounded text-purple-700 hover:text-purple-500"
-            onClick={handleClickRemove}
+            onClick={handleOpenRemoveNoteDialog}
           >
             حذف
           </button>
         </div>
+        <dialog
+          open={removeNoteDialogOpen}
+          onClose={handleCloseRemoveNoteDialog}
+          className="py-10 px-28 border-2 shadow-lg rounded-md cursor-auto
+           inset-0"
+        >
+          <div className="text-center mb-10">{contentState} حذف شود؟</div>
+          <div className="flex justify-between text-xs">
+            <button
+              onClick={handleClickRemove}
+              className="cursor-pointer hover:text-cyan-500"
+            >
+              حذف
+            </button>
+            <button
+              onClick={handleCloseRemoveNoteDialog}
+              className="cursor-pointer hover:text-cyan-500"
+            >
+              بازگشت
+            </button>
+          </div>
+        </dialog>
       </div>
     </>
   );
