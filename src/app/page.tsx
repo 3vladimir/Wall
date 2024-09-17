@@ -2,8 +2,11 @@
 "use client";
 import * as React from "react";
 import { Header, NoteBoxesList } from "../components";
-import { notesInitialValues } from "../lib/NotesInintialValues";
-import { addNote } from "../lib/NotesActions";
+import { Provider } from "react-redux";
+import { store } from "../Redux/Store/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../Redux/Store/Store";
+import { addNote } from "../Redux/Reducers/notesReducer";
 import DatePicker from "react-persian-calendar-date-picker";
 import { getToday } from "react-persian-calendar-date-picker";
 import "react-persian-calendar-date-picker/lib/DatePicker.css";
@@ -11,10 +14,12 @@ import "react-persian-calendar-date-picker/lib/DatePicker.css";
 function Main() {
   const today = getToday();
 
+  const dispatch = useDispatch<AppDispatch>();
+  const notesInfo = useSelector((state: RootState) => state.notes.value);
+
   const [date, setDate] = React.useState(today);
-  const [notesInfo, setNotesInfo] = React.useState(notesInitialValues);
-  const addNoteInputRef = React.useRef<HTMLInputElement>(null);
   const [isInputFocused, setIsInputFocused] = React.useState(false);
+  const addNoteInputRef = React.useRef<HTMLInputElement>(null);
 
   isInputFocused
     ? addNoteInputRef.current?.classList.add("pb-28")
@@ -22,7 +27,8 @@ function Main() {
 
   function handleSubmitAddNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    addNote({ notesInfo, setNotesInfo, addNoteInputRef, date });
+    const newContent = addNoteInputRef?.current?.value || "";
+    dispatch(addNote({ newContent: newContent.toString(), date: date }));
     addNoteInputRef.current ? (addNoteInputRef.current.value = "") : null;
   }
 
@@ -77,7 +83,7 @@ function Main() {
               </div>
             </form>
           </div>
-          <NoteBoxesList notesInfo={notesInfo} setNotesInfo={setNotesInfo} />
+          <NoteBoxesList />
         </div>
       </main>
     </>
@@ -87,8 +93,10 @@ function Main() {
 function App() {
   return (
     <>
-      <Header />
-      <Main />
+      <Provider store={store}>
+        <Header />
+        <Main />
+      </Provider>
     </>
   );
 }

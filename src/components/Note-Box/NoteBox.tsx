@@ -5,17 +5,17 @@ import * as React from "react";
 import { toPersianNumber } from "../../lib/TopersianNumber";
 import DatePicker from "react-persian-calendar-date-picker";
 import "react-persian-calendar-date-picker/lib/DatePicker.css";
-import { removeNote, editNote } from "../../lib/NotesActions";
 import { specifyExpiredNotes } from "../../lib/specifyExpiredNotes";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../Redux/Store/Store";
+import { removeNote, editNote } from "../../Redux/Reducers/notesReducer";
 import { Note } from "../../types/types";
 
 type Props = {
   note: Note;
-  notesInfo: Note[];
-  setNotesInfo: React.Dispatch<React.SetStateAction<Note[]>>;
 };
 
-function NoteBox({ note, notesInfo, setNotesInfo }: Props) {
+function NoteBox({ note }: Props) {
   const { content, deadline, dateOfRegistration, id } = note;
   const [contentState, setContentState] = React.useState(content);
   const [deadlineState, setDeadlineState] = React.useState(deadline);
@@ -24,6 +24,9 @@ function NoteBox({ note, notesInfo, setNotesInfo }: Props) {
   const { day, month, year } = date || { day: 0, month: 0, year: 0 };
   const editNoteInputRef = React.useRef<HTMLInputElement>(null);
   const noteBoxRef = React.useRef<HTMLDivElement>(null);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const notesInfo = useSelector((state: RootState) => state.notes.value);
 
   const [removeNoteDialogOpen, setRemoveNoteDialogOpen] = React.useState(false);
   function handleOpenRemoveNoteDialog() {
@@ -54,7 +57,8 @@ function NoteBox({ note, notesInfo, setNotesInfo }: Props) {
     setEditingMode(true);
   }
   function handleClickRemove() {
-    removeNote({ notesInfo, setNotesInfo, id });
+    dispatch(removeNote({ id: id }));
+    console.log(id);
   }
 
   function handleSubmitEditNote(event: React.FormEvent<HTMLFormElement>) {
@@ -66,7 +70,9 @@ function NoteBox({ note, notesInfo, setNotesInfo }: Props) {
       month: date ? month : 0,
       day: date ? day : 0,
     };
-    editNote({ notesInfo, setNotesInfo, id, newContent, newDeadline });
+    dispatch(
+      editNote({ newContent: newContent, newDeadline: newDeadline, id: id })
+    );
     setContentState(newContent);
     setDeadlineState(newDeadline);
 
