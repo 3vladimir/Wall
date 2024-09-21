@@ -14,8 +14,8 @@ const initialState: CounterState = {
   value: notesInitialValues,
 };
 
-const counterSlice = createSlice({
-  name: "counter",
+const notesRducer = createSlice({
+  name: "notes",
   initialState,
   reducers: {
     addNote: (
@@ -52,7 +52,7 @@ const counterSlice = createSlice({
       action: PayloadAction<{
         id: string;
       }>
-    ) => {
+    ) => {  
       state.value = state.value.filter((note) => note.id !== action.payload.id);
     },
     editNote: (
@@ -63,7 +63,7 @@ const counterSlice = createSlice({
         id: string;
       }>
     ) => {
-      state.value.map((note) =>
+      state.value = state.value.map((note) =>
         note.id === action.payload.id
           ? {
               ...note,
@@ -79,6 +79,7 @@ const counterSlice = createSlice({
   },
 });
 
-export const { addNote, removeNote, editNote, updateNote } = counterSlice.actions;
+export const { addNote, removeNote, editNote, updateNote } =
+  notesRducer.actions;
 
-export default counterSlice.reducer;
+export default notesRducer.reducer;

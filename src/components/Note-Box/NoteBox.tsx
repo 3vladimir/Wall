@@ -58,7 +58,6 @@ function NoteBox({ note }: Props) {
   }
   function handleClickRemove() {
     dispatch(removeNote({ id: id }));
-    console.log(id);
   }
 
   function handleSubmitEditNote(event: React.FormEvent<HTMLFormElement>) {
@@ -75,9 +74,11 @@ function NoteBox({ note }: Props) {
     );
     setContentState(newContent);
     setDeadlineState(newDeadline);
-
-    localStorage.setItem("notesInfo", JSON.stringify(notesInfo));
   }
+
+  React.useEffect(() => {
+    localStorage.setItem("notesInfo", JSON.stringify(notesInfo));
+  }, [notesInfo]);
 
   return (
     <>

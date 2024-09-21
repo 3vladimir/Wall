@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../Reducers/notesReducer';
+import { configureStore } from "@reduxjs/toolkit";
+import notesRducer from "../Reducers/notesReducer";
 
 export const store = configureStore({
   reducer: {
-    notes: counterReducer,
+    notes: notesRducer,
   },
 });
 
